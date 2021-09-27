@@ -6,15 +6,23 @@ using System.Threading.Tasks;
 
 namespace Lab2
 {
-    class SilverCustomer : Customer, IDiscount
+    class SilverCustomer : Customer
     {
         public SilverCustomer(string name, string password) : base(name, password)
         {
         }
 
-        public void setDiscount()
+        public override void AddToCart(Product product, int quantity)
         {
-           // _totalAmount = 0,9 * TotalAmount;
+            Shoppingcart.Add(product);
+            product.Quantity += quantity;
+            MyPrice += 0.9 * product.Price * quantity;
+        }
+        public override void RemoveFromCart(Product product, int quantity)
+        {
+            Shoppingcart.Remove(product);
+            product.Quantity -= quantity;
+            MyPrice -= 0.85 * product.Price * quantity;
         }
     }
 }

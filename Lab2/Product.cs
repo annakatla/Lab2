@@ -9,7 +9,6 @@ namespace Lab2
     class Product
     {
         private string _objectName;
-
         public string Objectname
         {
             get { return _objectName; }
@@ -17,7 +16,6 @@ namespace Lab2
         }
 
         private int _price;
-
         public int Price
         {
             get { return _price; }
@@ -25,22 +23,30 @@ namespace Lab2
         }
 
         private int _quantity;
-
         public int Quantity
         {
             get { return _quantity; }
             set { _quantity = value; }
         }
 
+        private int _totalSumPerProduct;
+        public int TotalSumPerProduct
+        {
+            get { return _totalSumPerProduct; }
+            set { _totalSumPerProduct = value; }
+        }
+
+
         public Product(string objectname, int price)
         {
             _price = price;
             _objectName = objectname;
+            _totalSumPerProduct = 0;
         }
-
         public override string ToString()
         {
-            return $"{_objectName}, {_price} SEK.";
+            return $"{_objectName}, {_price} SEK/st. {_quantity} st. {_totalSumPerProduct} SEK.";
         }
+
     }
 }
