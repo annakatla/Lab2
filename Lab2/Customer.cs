@@ -24,10 +24,14 @@ namespace Lab2
             set { _password = value; }
         }
 
-        public double MyPrice { get; set; }
+        private double _myPrice;
+        public double MyPrice
+        {
+            get { return _myPrice; }
+            set { _myPrice = value; }
+        }
 
         private List<Product> _shoppingcart;
-
         public List<Product> Shoppingcart
         {
             get { return _shoppingcart; }
@@ -70,8 +74,8 @@ namespace Lab2
                 {
                     Console.WriteLine("Felaktigt lösenord. Vänligen försök på nytt.");
                     Console.ReadKey();
-                    NewCustomer();
-                    return null;
+                    return NewCustomer();
+                    
                 }
         }
         public static bool VerifyPassword(string password)
@@ -89,7 +93,8 @@ namespace Lab2
         public virtual void AddToCart(Product product, int quantity)
         {
             Shoppingcart.Add(product);
-            product.Quantity += quantity;    
+            product.Quantity += quantity;
+            product.TotalSumPerProduct = product.TotalSumPerProduct + (quantity * product.Price);
             MyPrice += product.Price * quantity;
         }
 
@@ -120,8 +125,16 @@ namespace Lab2
 
         public virtual void RemoveFromCart(Product product, int quantity)
         {
-            Shoppingcart.Remove(product);
             product.Quantity -= quantity;
+            if (product.Quantity <= 0)
+            {
+                product.Quantity = 0;
+                product.TotalSumPerProduct = 0;
+            }
+            else
+            {
+                product.TotalSumPerProduct = product.TotalSumPerProduct - (quantity * product.Price);
+            }
             MyPrice -= product.Price * quantity;
         }
     }

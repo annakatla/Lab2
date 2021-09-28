@@ -33,195 +33,197 @@ namespace Lab2
             var Tjatte = new BronzeCustomer("Tjatte", "213");
             customers.Add(Tjatte);
 
-            bool loggingIn = true;
-            bool findingName = true;
-            bool programOn = true;
-            while (programOn)
+            bool knownCustomer = false;
+            bool letsStart = true;
+            while (letsStart)
             {
-                bool shoppingOn = true;
+                bool programOn = true;
+
                 //MENY ETT: 
                 Meny1();
                 //Kontrollera Menyvalet.
                 int menychoice = ControlMeny(2);
 
-                //Gå vidare i menyn.
-                if (menychoice == 1)
+                while (programOn)
                 {
-                    while (loggingIn)
+                    bool shoppingOn = true;
+                    //Gå vidare i menyn.
+                    if (menychoice == 1)
                     {
-
-                    Console.WriteLine("Ange ditt namn");
-                    loggedInCustomer = Console.ReadLine();
-                    foreach (var customer in customers)
-                    {
-                        if (loggedInCustomer == customer.Name)
+                        Console.Clear();
+                        Console.WriteLine("Ange ditt namn");
+                        loggedInCustomer = Console.ReadLine();
+                        foreach (var customer in customers)
                         {
-                            bool correctPassword = false;
-                            Console.WriteLine("Ange lösenord");
-                            while (!correctPassword)
+                            if (loggedInCustomer == customer.Name)
                             {
-                                string password = Console.ReadLine();
-                                if (password != customer.Password)
+                                knownCustomer = true;
+                                bool correctPassword = false;
+                                Console.WriteLine("Ange lösenord");
+                                while (!correctPassword)
                                 {
-                                    Console.WriteLine("Lösenordet är fel. Försök igen.");
+                                    string password = Console.ReadLine();
+                                    if (password != customer.Password)
+                                    {
+                                            Console.WriteLine("Lösenordet är fel. Försök igen.");
+                                    }
+                                    else if (password == customer.Password)
+                                    {
+                                        correctPassword = true;
+                                        thisCustomer = customer;
+                                    }
                                 }
-                                else if (password == customer.Password)
-                                {
-                                    correctPassword = true;
-                                    loggingIn = false;
-                                }
+                                correctPassword = true;
+                                break;
                             }
-                            thisCustomer = customer;
-                            break;
-                        }
-                        else
+                        }    
+                        if(!knownCustomer)
                         {
-                            findingName = false;
-                        }
-                    }
-                    if (!findingName)
-                    {
-                        Console.WriteLine("Namnet finns inte i vår databas. Välj mellan följande alternativ:");
-                        Console.WriteLine("1. Försök att skriva in namnet på nytt.");
-                        Console.WriteLine("2. Skapa ny kund.");
-
-                        menychoice = ControlMeny(2);
+                            Console.WriteLine("Namnet finns inte i vår databas. Välj mellan följande alternativ:");
+                            Console.WriteLine("1. Försök att skriva in namnet på nytt.");
+                            Console.WriteLine("2. Skapa ny kund.");
+                            menychoice = ControlMeny(2);
                         
+                            if (menychoice == 1)
+                            {
+                                continue;
+                            }
+                        }
+                        knownCustomer = false;
+                    }
+                    //SKAPA NY KUND 
+                    if (menychoice == 2)
+                    {
+                        thisCustomer = Customer.NewCustomer();
+                        customers.Add(thisCustomer);
+                    }
+
+
+                    //MENY TVÅ:
+                    Meny2();
+                    menychoice = ControlMeny(4);
+            
+                    while (shoppingOn)
+                    {
+                    //HANDLA (avaibleproducts())
                         if (menychoice == 1)
                         {
-                            findingName = true;
-                            continue;
-                        }
-                    }
-                    }
-                }
-                //SKAPA NY KUND 
-                if (menychoice == 2)
-                {
-                    thisCustomer = Customer.NewCustomer();
-                    customers.Add(thisCustomer);
-                }
-
-
-                //MENY TVÅ:
-                Meny2();
-                menychoice = ControlMeny(4);
-            
-                while (shoppingOn)
-                {
-                //HANDLA (avaibleproducts())
-                if (menychoice == 1)
-                {
-                    Console.WriteLine("Tillgängliga produkter att handla är: ");
-                    foreach (var product in products)
-                    {
-                            Console.WriteLine($"");
-                    }
-                    Console.WriteLine("Vad vill du köpa? Skriv in produktnamn.");
-                    string productToBuy = Console.ReadLine();
-
-                    //foreach-loop per produkt. jämför om det finns.
-                    foreach (var product in products)
-                    {
-                        if (productToBuy == product.Objectname.ToLower())
-                        {
-                            Console.WriteLine("Hur många vill du köpa?");
-                            bool amountOfProduct = int.TryParse(Console.ReadLine(), out int quantity);
-                            if (amountOfProduct)
-                            {
-                                thisCustomer.AddToCart(product, quantity);
-                                Meny3();
-                                menychoice = ControlMeny(4);
-                                if (menychoice == 1)
-                                {
-                                    continue;
-                                }
-                            }
-                        }
-             
-                    }
-
-                } 
-                //SE KUNDVAGN (showCart())
-                else if (menychoice == 2)
-                {
-                    if (thisCustomer.Shoppingcart.Count < 1)
-                    {
-                        Console.WriteLine("Du har inga produkter i din kundvagn.");
-                        Console.ReadKey();
-                        Meny4();
-                    }
-                    else
-                    {
-                        foreach (var product in products)
-                        {
-                            Console.WriteLine(product.ToString());
-                        }
-                        Console.WriteLine($"Totalsumma: {thisCustomer.MyPrice}");
-                        Console.ReadKey();
-                        Console.WriteLine("Vill du ta bort något från kundvagnen? Skriv in ja/nej.");
-                        string removeOrNot = Console.ReadLine();
-                        if (removeOrNot == "ja")
-                        {
-                            Console.WriteLine("Vad vill du ta bort? Skriv in produktnamn med små bokstäver");
-                            string productToRemove = Console.ReadLine();
-
+                            Console.Clear();
+                            Console.WriteLine("Tillgängliga produkter att handla är: ");
+                            Console.WriteLine();
                             foreach (var product in products)
                             {
-                                if (productToRemove == product.Objectname.ToLower())
+                                    Console.WriteLine($"{product.Objectname}, {product.Price} SEK/st.");
+                            }
+                            Console.WriteLine();
+                            Console.WriteLine("Vad vill du köpa? Skriv in produktnamn.");
+                            string productToBuy = Console.ReadLine();
+
+                            //foreach-loop per produkt. jämför om det finns.
+                            foreach (var product in products)
+                            {
+                                if (productToBuy == product.Objectname.ToLower())
                                 {
-                                    Console.WriteLine("Hur många vill du ta bort?");
-                                    int quantity = int.Parse(Console.ReadLine());
-                                    thisCustomer.RemoveFromCart(product, quantity);
+                                    Console.WriteLine("Hur många vill du köpa?");
+                                    bool amountOfProduct = int.TryParse(Console.ReadLine(), out int quantity);
+                                    if (amountOfProduct)
+                                    {
+                                        thisCustomer.AddToCart(product, quantity);
+                                        Meny3();
+                                        menychoice = ControlMeny(4);
+                                        if (menychoice == 1)
+                                        {
+                                            continue;
+                                        }
+                                    }
+                                }
+             
+                            }
+
+                        } 
+                        //SE KUNDVAGN (showCart())
+                        else if (menychoice == 2)
+                        {
+                            if (thisCustomer.Shoppingcart.Count < 1)
+                            {
+                                Console.WriteLine("Du har inga produkter i din kundvagn.");
+                                Console.ReadKey();
+                                Meny4();
+                                menychoice = ControlMeny(3);
+                            }
+                            else
+                            {
+                                foreach (var product in products)
+                                {
+                                    Console.WriteLine(product.ToString());
+                                }
+                                Console.WriteLine($"Totalsumma: {thisCustomer.MyPrice} SEK.");
+                                Console.ReadKey();
+                                Console.WriteLine("Vill du ta bort något från kundvagnen? Skriv in ja/nej.");
+                                string removeOrNot = Console.ReadLine();
+                                if (removeOrNot == "ja")
+                                {
+                                    Console.WriteLine("Vad vill du ta bort? Skriv in produktnamn med små bokstäver");
+                                    string productToRemove = Console.ReadLine();
+
+                                    foreach (var product in products)
+                                    {
+                                        if (productToRemove == product.Objectname.ToLower())
+                                        {
+                                            Console.WriteLine("Hur många vill du ta bort?");
+                                            int quantity = int.Parse(Console.ReadLine());
+                                            thisCustomer.RemoveFromCart(product, quantity);
+                                        }
+                                    }
+                                    Meny3();
+                                    menychoice = ControlMeny(4);
+                                }
+                                else
+                                {
+                                    Meny4();
+                                    menychoice = ControlMeny(3);
                                 }
                             }
-                            Meny3();
-                            menychoice = ControlMeny(4);
-                        }
-                        else
+                            if (menychoice == 1)
+                            {
+                                continue;
+                            }
+                            else if (!shoppingOn && menychoice == 2)
+                            {
+                                menychoice = 3;
+                            }
+                            else if (!shoppingOn && menychoice == 3)
+                            {
+                                menychoice = 4;
+                            }
+                        } 
+                        //GÅ TILL KASSAN
+                        else if (menychoice == 3)
                         {
-                            shoppingOn = false;
-                            Meny4();
-                            menychoice = ControlMeny(3);
+
+                        }
+                        else if (menychoice == 4)
+                        {
+                            Console.Clear();
+                            Console.WriteLine("Du är nu utloggad. Vill du logga in på nytt? Tryck 1. Om du vill stänga av, tryck 2.");
+                            menychoice = ControlMeny(2);
+                            if (menychoice == 1)
+                            {
+                                programOn = false;
+                                shoppingOn = false;
+                                Console.Clear();
+
+                            }
+                            else
+                            {
+                                letsStart = false;
+                                programOn = false;
+                                shoppingOn = false;
+                            }
                         }
                     }
-                    if (menychoice == 1)
-                    {
-                        continue;
-                    }
-                    else if (!shoppingOn && menychoice == 2)
-                    {
-                        menychoice = 3;
-                    }
-                    else if (!shoppingOn && menychoice == 3)
-                    {
-                        menychoice = 4;
-                    }
-                } 
-                //GÅ TILL KASSAN
-                else if (menychoice == 3)
-                {
-
+                    Console.WriteLine("Välkommen åter!");
                 }
-                else if (menychoice == 4)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Du är nu utloggad. Vill du logga in på nytt? Tryck 1. Om du vill stänga av, tryck 2.");
-                    menychoice = ControlMeny(2);
-                    if (menychoice == 1)
-                    {
-                        shoppingOn = false;
-                        Console.Clear();
-
-                    }
-                    else
-                    {
-                        programOn = false;
-                        shoppingOn = false;
-                    }
-                }
-                }
-                Console.WriteLine("Välkommen åter!");
             }
         }
 
