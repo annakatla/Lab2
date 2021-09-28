@@ -31,6 +31,9 @@ namespace Lab2
             set { _myPrice = value; }
         }
 
+        public string Address { get; set; }
+        public string invoiceAddress { get; set; }
+
         private List<Product> _shoppingcart;
         public List<Product> Shoppingcart
         {
@@ -54,7 +57,7 @@ namespace Lab2
 
         public override string ToString()
         {
-            return $"Välkommen, {Name}!";
+            return $"Välkommen, {Name}! Ditt lösenord är {Password}. I din kundvagn ligger nu ";
         }
 
         public static Customer NewCustomer()
@@ -89,53 +92,39 @@ namespace Lab2
             }
             return correctPassword;
         }
-
         public virtual void AddToCart(Product product, int quantity)
         {
+            double productCost = product.Price * quantity;
             Shoppingcart.Add(product);
             product.Quantity += quantity;
-            product.TotalSumPerProduct = product.TotalSumPerProduct + (quantity * product.Price);
-            MyPrice += product.Price * quantity;
+            product.TotalSumPerProduct = product.TotalSumPerProduct + productCost;
+            MyPrice += productCost;
         }
-
-        //public void ShowCart()
-        //{
-        //    if (Shoppingcart.Count < 1)
-        //    {
-        //        Console.WriteLine("Du har inga produkter i din kundvagn.");
-        //        Console.ReadKey();
-        //    }
-        //    else
-        //    {
-
-        //        Console.WriteLine(Product.ToString());
-        //        Console.WriteLine($"Totalsumma: {MyPrice}");
-        //        Console.ReadKey();
-        //        Console.WriteLine("Vill du ta bort något från kundvagnen? Skriv in ja/nej.");
-        //        string removeOrNot = Console.ReadLine();
-        //        if (removeOrNot == "ja")
-        //        {
-        //            Console.WriteLine("Vad vill du ta bort? Skriv in produktnamn med små bokstäver");
-        //            string product = Console.ReadLine();
-        //            Console.WriteLine("Hur många vill du ta bort?");
-        //            int quantity = int.Parse(Console.ReadLine());
-        //        }
-        //    }
-        //}
-
         public virtual void RemoveFromCart(Product product, int quantity)
         {
+            double productCost = product.Price * quantity;
             product.Quantity -= quantity;
             if (product.Quantity <= 0)
             {
                 product.Quantity = 0;
                 product.TotalSumPerProduct = 0;
+                Shoppingcart.Remove(product);
             }
             else
             {
-                product.TotalSumPerProduct = product.TotalSumPerProduct - (quantity * product.Price);
+                product.TotalSumPerProduct = product.TotalSumPerProduct - productCost;
             }
-            MyPrice -= product.Price * quantity;
+            MyPrice -= productCost;
+        }
+        public void ClearCart()
+        {
+            foreach (Product product in Shoppingcart)
+            {
+                product.Quantity = 0;
+                product.TotalSumPerProduct = 0;
+            }
+            Shoppingcart.Clear();
+            MyPrice = 0;
         }
     }
 }

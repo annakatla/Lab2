@@ -36,7 +36,6 @@ namespace Lab2
             set { _totalSumPerProduct = value; }
         }
 
-
         public Product(string objectname, int price)
         {
             _price = price;
