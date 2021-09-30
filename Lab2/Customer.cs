@@ -1,10 +1,5 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lab2 
 {
@@ -31,8 +26,19 @@ namespace Lab2
             set { _myPrice = value; }
         }
 
-        public string Address { get; set; }
-        public string invoiceAddress { get; set; }
+        private string _address;
+        public string Address
+        {
+            get { return _address; }
+            set { _address = value; }
+        }
+
+        private string _invoiceAddress;
+        public string InvoiceAddress
+        {
+            get { return _invoiceAddress; }
+            set { _invoiceAddress = value; }
+        }
 
         private List<Product> _shoppingcart;
         public List<Product> Shoppingcart
@@ -46,7 +52,6 @@ namespace Lab2
             MyPrice = 0;
             Shoppingcart = new List<Product>();
         }
-
         public Customer(string name, string password)
         {
             this._name = name;
@@ -57,36 +62,17 @@ namespace Lab2
 
         public override string ToString()
         {
-            return $"Välkommen, {Name}! Ditt lösenord är {Password}. I din kundvagn ligger nu ";
+            string message = $"Välkommen, {Name}! Ditt lösenord är {Password}. I din kundvagn ligger ";
+            foreach (var product in Shoppingcart)
+            {
+                message += product.ToString() + " ";
+            }
+            return message;
         }
-
-        public static Customer NewCustomer()
+        public bool VerifyPassword(string password)
         {
-            Console.Clear();
-            Console.WriteLine("Ange ett namn:");
-            string name = Console.ReadLine();
-            Console.WriteLine("Ange det lösenord du vill använda:");
-            string password = Console.ReadLine();
-            bool correctPassword = VerifyPassword(password);
-                if (correctPassword)
-                {
-                    var newCustomer = new Customer(name, password);
-                    return newCustomer;
-                }
-                else
-                {
-                    Console.WriteLine("Felaktigt lösenord. Vänligen försök på nytt.");
-                    Console.ReadKey();
-                    return NewCustomer();
-                    
-                }
-        }
-        public static bool VerifyPassword(string password)
-        {
-            Console.WriteLine("Skriv in lösenord på nytt:");
-            string passwordAgain = Console.ReadLine();
             bool correctPassword = false;
-            if (password == passwordAgain)
+            if (password == _password)
             {
                 correctPassword = true;
             }
@@ -98,21 +84,20 @@ namespace Lab2
             Shoppingcart.Add(product);
             product.Quantity += quantity;
             product.TotalSumPerProduct = product.TotalSumPerProduct + productCost;
-            MyPrice += productCost;
+            MyPrice += productCost;           
         }
         public virtual void RemoveFromCart(Product product, int quantity)
         {
+            if (quantity > product.Quantity)
+            {
+                quantity = product.Quantity;
+            }
             double productCost = product.Price * quantity;
             product.Quantity -= quantity;
+            product.TotalSumPerProduct = product.TotalSumPerProduct - productCost;
             if (product.Quantity <= 0)
             {
-                product.Quantity = 0;
-                product.TotalSumPerProduct = 0;
                 Shoppingcart.Remove(product);
-            }
-            else
-            {
-                product.TotalSumPerProduct = product.TotalSumPerProduct - productCost;
             }
             MyPrice -= productCost;
         }

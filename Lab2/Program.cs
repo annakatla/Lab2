@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Lab2
 {
@@ -12,12 +11,10 @@ namespace Lab2
             var products = new List<Product>();
             //En lista för kunder.
             var customers = new List<Customer>();
-            //String för att spara namn vid inloggning.
-            string loggedInCustomer;
             //Kundobjekt för att ha koll på inloggad kund.
             Customer thisCustomer = null;
             
-            //Definiera tre produkter. 
+            //Tre fördefinierade produkter. 
             var lösnäsa = new Product("Lösnäsa", 50);
             products.Add(lösnäsa);
             var peruk = new Product("Peruk", 200);
@@ -26,58 +23,67 @@ namespace Lab2
             products.Add(ballong);
 
             //Tre fördefinierade kunder.
-            var Knatte = new GoldCustomer("Knatte", "123");
+            var Knatte = new Customer("Knatte", "123");
             customers.Add(Knatte);
-            var Fnatte = new SilverCustomer("Fnatte", "321");
+            var Fnatte = new Customer("Fnatte", "321");
             customers.Add(Fnatte);
-            var Tjatte = new BronzeCustomer("Tjatte", "213");
+            var Tjatte = new Customer("Tjatte", "213");
             customers.Add(Tjatte);
 
-            bool knownCustomer = false;
+            //Bool och while-loop för att kunna börja om från början efter utloggning.
             bool letsStart = true;
-
             while (letsStart)
             {
+                //Bool för att komma till inloggning utan att behöva se första menyn.
                 bool programOn = true;
 
-                //MENY ETT: 
+                //Första menyn visas: 
                 Meny1();
                 //Kontrollera Menyvalet.
                 int menychoice = ControlMeny(2);
 
                 while (programOn)
                 {
-                    bool shoppingOn = true;
+
                     //LOGGA IN
                     if (menychoice == 1)
                     {
+                        //Bool för att kunna kontrollera om kunden redan finns i registret.
+                        bool knownCustomer = false;
+                        //Be om namn.
                         Console.Clear();
                         Console.WriteLine("Ange ditt namn");
-                        loggedInCustomer = Console.ReadLine();
+                        //Spara namn i variabel
+                        string loggedInCustomer = Console.ReadLine();
+                        //Kontrollera om namnet stämmer med befintliga kunder.
                         foreach (var customer in customers)
                         {
-                            if (loggedInCustomer == customer.Name)
+                            if (loggedInCustomer.ToLower() == customer.Name.ToLower())
                             {
+                                //Sätt bool till true, för att inte gå in i if-satsen längre ner.
                                 knownCustomer = true;
-                                bool correctPassword = false;
+                                //Be användaren att skriva in lösenord.
                                 Console.WriteLine("Ange lösenord");
-                                while (!correctPassword)
-                                {
-                                    string password = Console.ReadLine();
-                                    if (password != customer.Password)
-                                    {
-                                            Console.WriteLine("Lösenordet är fel. Försök igen.");
+                                //Spara lösenord i variabel.
+                                string password = Console.ReadLine();
+                                //Bool för att underlätta kontrollerandet av lösenord.
+                                bool correctPassword = customer.VerifyPassword(password);
+                                while (knownCustomer)
+                                {   
+                                    if (!correctPassword)
+                                    {       
+                                        //Om lösenordet inte stämmer: be användaren skriva in igen. While-loopen börjar om från början.
+                                        Console.WriteLine("Lösenordet är fel. Försök igen.");
                                     }
-                                    else if (password == customer.Password)
-                                    {
-                                        correctPassword = true;
+                                    else
+                                    {   //Om lösenord stämmer: spara den inloggade kunden i thisCustomer och break från loopen.
                                         thisCustomer = customer;
+                                        break;
                                     }
                                 }
-                                correctPassword = true;
-                                break;
                             }
                         }    
+                        //Om det inskrivna namnet inte finns i kundregistret: låt användaren få möjlighet att antingen försöka logga in igen eller att skapa ny kund.
                         if(!knownCustomer)
                         {
                             Console.WriteLine("Namnet finns inte i vår databas. Välj mellan följande alternativ:");
@@ -95,8 +101,25 @@ namespace Lab2
                     //SKAPA NY KUND 
                     if (menychoice == 2)
                     {
-                        thisCustomer = Customer.NewCustomer();
-                        customers.Add(thisCustomer);
+                        Console.Clear();
+                        Console.WriteLine("Ange ett namn:");
+                        string name = Console.ReadLine();
+                        Console.WriteLine("Ange det lösenord du vill använda:");
+                        string password = Console.ReadLine();
+                        var newCustomer = new Customer(name, password);
+                        Console.WriteLine("Skriv in ditt lösenord på nytt.");
+                        string password2 = Console.ReadLine();
+                        if (newCustomer.VerifyPassword(password2))
+                        {
+                            thisCustomer = newCustomer;
+                            customers.Add(thisCustomer);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Felaktigt lösenord. Vänligen försök på nytt.");
+                            Console.ReadKey();
+                            break;
+                        }
                     }
 
 
@@ -104,6 +127,8 @@ namespace Lab2
                     Meny2();
                     menychoice = ControlMeny(4);
             
+                    //Bool och while-loop för att kunna återkomma till att handla mer.
+                    bool shoppingOn = true;
                     while (shoppingOn)
                     {
                         //HANDLA
@@ -141,7 +166,7 @@ namespace Lab2
              
                             }
 
-                        } 
+                        }  
                         //SE KUNDVAGN
                         else if (menychoice == 2)
                         {
@@ -202,10 +227,10 @@ namespace Lab2
                             Console.WriteLine();
                             Console.Write("Vänligen skriv in din postadress: ");
                             thisCustomer.Address = Console.ReadLine();
-                            Console.Write("Vilken adress vill du skicka fakturan till?");
-                            thisCustomer.invoiceAddress = Console.ReadLine();
+                            Console.Write("Vilken adress vill du skicka fakturan till? ");
+                            thisCustomer.InvoiceAddress = Console.ReadLine();
                             Console.WriteLine($"Tack för ditt köp! Din order kommer att hanteras och skickas till {thisCustomer.Address} inom 2-10 arbetsdagar.");
-                            Console.WriteLine($"En faktura på {thisCustomer.MyPrice} SEK skickas till {thisCustomer.invoiceAddress}.");
+                            Console.WriteLine($"En faktura på {thisCustomer.MyPrice} SEK skickas till {thisCustomer.InvoiceAddress}.");
                             Console.ReadKey();
                             thisCustomer.ClearCart();
                             letsStart = false;

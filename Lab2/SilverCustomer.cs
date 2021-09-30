@@ -8,20 +8,20 @@ namespace Lab2
 {
     class SilverCustomer : Customer
     {
-        private double _procent;
+        private double _discount;
         public double Procent
         {
-            get { return _procent; }
-            set { _procent = value; }
+            get { return _discount; }
+            set { _discount = value; }
         }
         public SilverCustomer(string name, string password) : base(name, password)
         {
-            _procent = 0.9;
+            _discount = 0.9;
         }
 
         public override void AddToCart(Product product, int quantity)
         {
-            double productCost = _procent * product.Price * quantity;
+            double productCost = _discount * product.Price * quantity;
             Shoppingcart.Add(product);
             product.Quantity += quantity;
             product.TotalSumPerProduct = product.TotalSumPerProduct + productCost;
@@ -30,7 +30,7 @@ namespace Lab2
 
         public override void RemoveFromCart(Product product, int quantity)
         {
-            double productCost = _procent * product.Price * quantity;
+            double productCost = _discount * product.Price * quantity;
             product.Quantity -= quantity;
             if (product.Quantity <= 0)
             {
