@@ -62,14 +62,15 @@ namespace Lab2
                             {
                                 //Sätt bool till true, för att inte gå in i if-satsen längre ner.
                                 knownCustomer = true;
-                                //Be användaren att skriva in lösenord.
-                                Console.WriteLine("Ange lösenord");
-                                //Spara lösenord i variabel.
-                                string password = Console.ReadLine();
-                                //Bool för att underlätta kontrollerandet av lösenord.
-                                bool correctPassword = customer.VerifyPassword(password);
-                                while (knownCustomer)
+                                bool getPassword = true;
+                                while (getPassword)
                                 {   
+                                    //Be användaren att skriva in lösenord.
+                                    Console.WriteLine("Ange lösenord");
+                                    //Spara lösenord i variabel.
+                                    string password = Console.ReadLine();
+                                    //Bool för att underlätta kontrollerandet av lösenord.
+                                    bool correctPassword = customer.VerifyPassword(password);
                                     if (!correctPassword)
                                     {       
                                         //Om lösenordet inte stämmer: be användaren skriva in igen. While-loopen börjar om från början.
@@ -116,7 +117,7 @@ namespace Lab2
                         }
                         else
                         {
-                            Console.WriteLine("Felaktigt lösenord. Vänligen försök på nytt.");
+                            Console.WriteLine("Felaktigt lösenord. Klicka på valfri knapp för att försöka på nytt.");
                             Console.ReadKey();
                             break;
                         }
@@ -187,9 +188,9 @@ namespace Lab2
                                 string removeOrNot = Console.ReadLine();
                                 if (removeOrNot == "ja")
                                 {
-                                    Console.WriteLine("Vad vill du ta bort? Skriv in produktnamn med små bokstäver. Om du vill tömma kundvagnen helt, skriv in ordet clear.");
+                                    Console.WriteLine("Vad vill du ta bort? Om du vill tömma kundvagnen helt, skriv in ordet clear.");
                                     string productToRemove = Console.ReadLine();
-                                    if (productToRemove == "clear")
+                                    if (productToRemove.ToLower() == "clear")
                                     {
                                         thisCustomer.ClearCart();
                                     }
@@ -197,11 +198,19 @@ namespace Lab2
                                     {
                                         foreach (var product in products)
                                         {
-                                            if (productToRemove == product.Objectname.ToLower())
+                                            if (productToRemove.ToLower() == product.Objectname.ToLower())
                                             {
                                                 Console.WriteLine("Hur många vill du ta bort?");
-                                                int quantity = int.Parse(Console.ReadLine());
-                                                thisCustomer.RemoveFromCart(product, quantity);
+                                                bool correctQuantity = int.TryParse(Console.ReadLine(), out int quantity);
+                                                if (correctQuantity)
+                                                {
+                                                    thisCustomer.RemoveFromCart(product, quantity);
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("Du angav inte ett riktigt antal, i siffror. Försök igen.");
+                                                    Console.ReadKey();
+                                                }
                                             }
                                         }
                                     }

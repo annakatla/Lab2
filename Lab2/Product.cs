@@ -40,7 +40,7 @@ namespace Lab2
         }
         public override string ToString()
         {
-            return $"{_objectName}, {_price} SEK/st. {_quantity} st. {TotalSumPerProduct} SEK.";
+            return $"{_objectName}, {_price} SEK/st. {_quantity} st. {_totalSumPerProduct} SEK.";
         }
 
     }
