@@ -31,16 +31,16 @@ namespace Lab2
         }
         public override void RemoveFromCart(Product product, int quantity)
         {
+            if (quantity > product.Quantity)
+            {
+                quantity = product.Quantity;
+            }
             double productCost = _discount * product.Price * quantity;
             product.Quantity -= quantity;
+            product.TotalSumPerProduct = product.TotalSumPerProduct - productCost;
             if (product.Quantity <= 0)
             {
-                product.Quantity = 0;
-                product.TotalSumPerProduct = 0;
-            }
-            else
-            {
-                product.TotalSumPerProduct = product.TotalSumPerProduct - productCost;
+                Shoppingcart.Remove(product);
             }
             MyPrice -= productCost;
         }
