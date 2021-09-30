@@ -102,24 +102,28 @@ namespace Lab2
                     //SKAPA NY KUND 
                     if (menychoice == 2)
                     {
-                        Console.Clear();
-                        Console.WriteLine("Ange ett namn:");
-                        string name = Console.ReadLine();
-                        Console.WriteLine("Ange det lösenord du vill använda:");
-                        string password = Console.ReadLine();
-                        var newCustomer = new Customer(name, password);
-                        Console.WriteLine("Skriv in ditt lösenord på nytt.");
-                        string password2 = Console.ReadLine();
-                        if (newCustomer.VerifyPassword(password2))
+                        bool NewUserPassword = false;
+                        while (!NewUserPassword)
                         {
-                            thisCustomer = newCustomer;
-                            customers.Add(thisCustomer);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Felaktigt lösenord. Klicka på valfri knapp för att försöka på nytt.");
-                            Console.ReadKey();
-                            break;
+                            Console.Clear();
+                            Console.WriteLine("Ange ett namn:");
+                            string name = Console.ReadLine();
+                            Console.WriteLine("Ange det lösenord du vill använda:");
+                            string password = Console.ReadLine();
+                            var newCustomer = new Customer(name, password);
+                            Console.WriteLine("Skriv in ditt lösenord på nytt.");
+                            string password2 = Console.ReadLine();
+                            if (newCustomer.VerifyPassword(password2))
+                            {
+                                thisCustomer = newCustomer;
+                                customers.Add(thisCustomer);
+                                NewUserPassword = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Felaktigt lösenord. Klicka på valfri knapp för att försöka på nytt.");
+                                Console.ReadKey();
+                            }
                         }
                     }
 
