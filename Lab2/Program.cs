@@ -148,7 +148,7 @@ namespace Lab2
                             }
                             Console.WriteLine();
                             Console.WriteLine("Vad vill du köpa? Skriv in produktnamn.");
-                            string productToBuy = Console.ReadLine();
+                            string productToBuy = Console.ReadLine().ToLower();
 
                             //foreach-loop per produkt. jämför om det finns.
                             foreach (var product in products)
@@ -166,6 +166,11 @@ namespace Lab2
                                         {
                                             continue;
                                         }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Du angav inte ett korrekt heltal. Tryck på valfri tangent för att försöka igen.");
+                                        Console.ReadKey();
                                     }
                                 }
              
@@ -192,9 +197,10 @@ namespace Lab2
                                 string removeOrNot = Console.ReadLine();
                                 if (removeOrNot == "ja")
                                 {
-                                    Console.WriteLine("Vad vill du ta bort? Om du vill tömma kundvagnen helt, skriv in ordet clear.");
-                                    string productToRemove = Console.ReadLine();
-                                    if (productToRemove.ToLower() == "clear")
+                                    Console.WriteLine("Vad vill du ta bort? Skriv in produktnamn. Antalet produkter kommer i nästa vy. ");
+                                    Console.WriteLine("Om du vill tömma kundvagnen helt, skriv in ordet clear.");
+                                    string productToRemove = Console.ReadLine().ToLower();
+                                    if (productToRemove == "clear")
                                     {
                                         thisCustomer.ClearCart();
                                     }
@@ -202,9 +208,9 @@ namespace Lab2
                                     {
                                         foreach (var product in products)
                                         {
-                                            if (productToRemove.ToLower() == product.Objectname.ToLower())
+                                            if (productToRemove == product.Objectname.ToLower())
                                             {
-                                                Console.WriteLine("Hur många vill du ta bort?");
+                                                Console.WriteLine("Hur många vill du ta bort? Ange i siffror.");
                                                 bool correctQuantity = int.TryParse(Console.ReadLine(), out int quantity);
                                                 if (correctQuantity)
                                                 {
