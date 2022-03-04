@@ -1,2 +1,2 @@
-# Lab2
-Butik
+# Labb 2
+Skapat butik i konsolapplikation.
